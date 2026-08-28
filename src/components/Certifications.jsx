@@ -7,6 +7,7 @@ const certifications = [
     year: '2026',
     skills: ['MongoDB', 'Database Administration', 'NoSQL'],
     link: '/certificates/mongodb_admin.pdf',
+    thumb: '/certificates/mongodb_admin.png',
   },
   {
     title: 'Microsoft Certified: Azure Fundamentals (AZ-900)',
@@ -14,6 +15,7 @@ const certifications = [
     year: '2026',
     skills: ['Azure', 'Cloud Computing', 'AZ-900'],
     link: '/certificates/azure_fundamentals.pdf',
+    thumb: '/certificates/azure_fundamentals.png',
   },
   {
     title: 'Open Source Software',
@@ -21,6 +23,7 @@ const certifications = [
     year: '2026',
     skills: ['Open Source', 'Git & GitHub', 'Linux'],
     link: '/certificates/open_source_software.png',
+    thumb: '/certificates/open_source_software.png',
   },
 ];
 
@@ -86,8 +89,11 @@ export default function Certifications() {
                   opacity: p === 0 ? 1 : certP,
                   filter: p === 0 ? 'none' : `blur(${(1 - certP) * 4}px)`,
                 }}
-              >
-                <div className="cert-badge">
+>
+                  <div className="cert-thumb">
+                    <img src={cert.thumb} alt={cert.title} loading="lazy" />
+                  </div>
+                  <div className="cert-badge">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <circle cx="12" cy="8" r="6" />
                     <path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5" />
