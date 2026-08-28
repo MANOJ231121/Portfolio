@@ -6,7 +6,6 @@ const certifications = [
     issuer: 'FACE Prep',
     year: '2026',
     skills: ['MongoDB', 'Database Administration', 'NoSQL'],
-    link: '/certificates/mongodb_admin.pdf',
     thumb: '/certificates/mongodb_admin.png',
   },
   {
@@ -14,7 +13,6 @@ const certifications = [
     issuer: 'Ethnus Codemithra',
     year: '2026',
     skills: ['Azure', 'Cloud Computing', 'AZ-900'],
-    link: '/certificates/azure_fundamentals.pdf',
     thumb: '/certificates/azure_fundamentals.png',
   },
   {
@@ -22,7 +20,6 @@ const certifications = [
     issuer: 'vityarthi (VIT Bhopal University)',
     year: '2026',
     skills: ['Open Source', 'Git & GitHub', 'Linux'],
-    link: '/certificates/open_source_software.png',
     thumb: '/certificates/open_source_software.png',
   },
 ];
