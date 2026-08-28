@@ -80,7 +80,7 @@ export default function About() {
                 and thoughtful design.
               </>,
               'I am currently working as an intern at Prodigy Infotech, where I am gaining hands-on experience in web development and building responsive applications. I enjoy working at the intersection of design and technology, creating seamless user interfaces.',
-              "I have built 3 projects so far and am actively working on more. When I'm not coding, you'll find me exploring new technologies, learning best practices, and sketching UI concepts.",
+              "I have built 3 projects so far and I am actively working on more. When I'm not coding, you'll find me exploring new technologies, learning best practices, and sketching UI concepts.",
             ].map((text, i) => {
               const paragraphStart = 0.15 + i * 0.15;
               const paragraphProgress = Math.max(
@@ -104,7 +104,7 @@ export default function About() {
             <div className="about-details">
               {[
                 { label: 'Name', value: 'Manoj Chandra Joshi' },
-                { label: 'Email', value: 'manojoshi230611@gmail.com' },
+                { label: 'Email', value: 'manojjoshi230611@gmail.com' },
                 { label: 'Location', value: 'Champawat,Uttarakhand,India' },
                 { label: 'Availability', value: 'Open to internships & work', green: true },
               ].map((item, i) => {
