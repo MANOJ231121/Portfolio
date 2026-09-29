@@ -1,5 +1,6 @@
 import useScrollProgress from '../hooks/useScrollProgress';
 import foodImage from '../assets/food_image.png';
+import kiranaImage from '../assets/kirana_ai.png';
 
 const projects = [
   {
@@ -14,6 +15,16 @@ const projects = [
   },
   {
     id: 2,
+    title: 'Kirana AI Voice Assistant',
+    category: 'AI & Web Development',
+    description:
+      'An AI-powered local store voice assistant featuring continuous voice listening powered by Groq AI, real-time product catalog search, and interactive basket ordering.',
+    tags: ['React', 'Groq AI', 'Voice AI', 'Vite', 'Tailwind CSS'],
+    link: 'https://kirana-ai-rose.vercel.app/',
+    image: kiranaImage,
+  },
+  {
+    id: 3,
     title: 'Coming up',
     category: '',
     description: '',

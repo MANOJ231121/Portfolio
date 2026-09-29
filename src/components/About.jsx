@@ -79,7 +79,7 @@ export default function About() {
                 developer who loves turning ideas into reality through clean code
                 and thoughtful design.
               </>,
-              'I am currently working as an intern at Prodigy Infotech, where I am gaining hands-on experience in web development and building responsive applications. I enjoy working at the intersection of design and technology, creating seamless user interfaces.',
+              'I am a passionate developer who enjoys building responsive and user-friendly web applications. I love working at the intersection of design and technology, turning ideas into seamless digital experiences.',
               "I have built 3 projects so far and I am actively working on more. When I'm not coding, you'll find me exploring new technologies, learning best practices, and sketching UI concepts.",
             ].map((text, i) => {
               const paragraphStart = 0.15 + i * 0.15;
