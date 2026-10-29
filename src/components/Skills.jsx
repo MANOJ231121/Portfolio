@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import useScrollProgress from '../hooks/useScrollProgress';
 
 const skills = [
@@ -24,8 +25,42 @@ function ease(t) {
 }
 
 export default function Skills() {
-  const [ref, progress, inView] = useScrollProgress();
-  const p = inView ? ease(progress) : 0;
+  const [ref, progress] = useScrollProgress();
+  const p = ease(progress);
+  const marqueeRef = useRef(null);
+
+  // Velocity-driven kinetic marquee acceleration (lenis.dev signature effect)
+  useEffect(() => {
+    if (!window.lenis) return;
+    const marqueeEl = marqueeRef.current;
+    if (!marqueeEl) return;
+
+    let timeout;
+
+    const onScroll = (e) => {
+      const v = e.velocity || 0;
+      // Kinetic velocity tilt on marquee text
+      const skew = Math.max(-5, Math.min(5, v * 0.08));
+      marqueeEl.style.transform = skew !== 0 ? `skewX(${skew.toFixed(2)}deg)` : 'none';
+
+      // Accelerate CSS marquee animation speed dynamically with scroll velocity
+      const anims = marqueeEl.getAnimations?.();
+      if (anims && anims.length > 0) {
+        anims[0].playbackRate = 1 + Math.min(4, Math.abs(v) * 0.12);
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          if (anims[0]) anims[0].playbackRate = 1;
+          if (marqueeEl) marqueeEl.style.transform = 'none';
+        }, 150);
+      }
+    };
+
+    window.lenis.on('scroll', onScroll);
+    return () => {
+      window.lenis?.off('scroll', onScroll);
+      clearTimeout(timeout);
+    };
+  }, []);
 
   return (
     <section className="skills" id="skills" ref={ref}>
@@ -34,8 +69,8 @@ export default function Skills() {
           <span
             className="section-tag"
             style={{
-              opacity: p === 0 ? 1 : Math.min(p * 5, 1),
-              transform: p === 0 ? 'none' : `scale(${0.5 + p * 0.5})`,
+              opacity: p >= 1 ? 1 : Math.min(p * 5, 1),
+              transform: p >= 1 ? 'none' : `scale(${0.5 + p * 0.5})`,
             }}
           >
             03 / Skills
@@ -43,14 +78,14 @@ export default function Skills() {
           <h2
             className="section-title"
             style={{
-              clipPath: p === 0 ? 'none' : `inset(0 0 ${(1 - p) * 100}% 0)`,
+              clipPath: p >= 1 ? 'none' : `inset(0 0 ${(1 - p) * 100}% 0)`,
             }}
           >
             My <span className="green">Expertise</span>
           </h2>
           <div
             style={{
-              width: p === 0 ? '0px' : `${p * 60}px`,
+              width: `${p * 60}px`,
               height: '2px',
               background: 'var(--green)',
               marginTop: '16px',
@@ -68,11 +103,11 @@ export default function Skills() {
                 key={group.category}
                 className="skill-group"
                 style={{
-                  transform: p === 0
+                  transform: groupP >= 1
                     ? 'none'
                     : `translateX(${(1 - groupP) * (isLeft ? -120 : 120)}px) rotate(${(1 - groupP) * (isLeft ? -5 : 5)}deg)`,
-                  opacity: p === 0 ? 1 : groupP,
-                  filter: p === 0 ? 'none' : `blur(${(1 - groupP) * 6}px)`,
+                  opacity: groupP,
+                  filter: groupP >= 1 ? 'none' : `blur(${(1 - groupP) * 6}px)`,
                 }}
               >
                 <h3 className="skill-group-title">{group.category}</h3>
@@ -88,14 +123,14 @@ export default function Skills() {
                         key={skill}
                         className="skill-item"
                         style={{
-                          opacity: p === 0 ? 1 : itemP,
-                          transform: p === 0 ? 'none' : `translateX(${(1 - itemP) * 30}px)`,
+                          opacity: itemP,
+                          transform: itemP >= 1 ? 'none' : `translateX(${(1 - itemP) * 30}px)`,
                         }}
                       >
                         <span
                           className="skill-dot"
                           style={{
-                            transform: `scale(${p === 0 ? 1 : dotScale})`,
+                            transform: `scale(${dotScale})`,
                             boxShadow:
                               dotRipple > 0
                                 ? `0 0 ${dotRipple * 12}px ${dotRipple * 4}px rgba(185,255,102,${0.4 * (1 - dotRipple)})`
@@ -114,12 +149,12 @@ export default function Skills() {
         <div
           className="marquee-section"
           style={{
-            opacity: p === 0 ? 1 : Math.min(p * 3, 1),
-            transform: p === 0 ? 'none' : `translateY(${(1 - p) * 40}px)`,
+            opacity: p >= 1 ? 1 : Math.min(p * 3, 1),
+            transform: p >= 1 ? 'none' : `translateY(${(1 - p) * 40}px)`,
           }}
         >
           <div className="marquee">
-            <div className="marquee-content">
+            <div className="marquee-content" ref={marqueeRef}>
               {[...skills.flatMap((g) => g.items), ...skills.flatMap((g) => g.items)].map(
                 (skill, i) => (
                   <span key={i} className="marquee-item">

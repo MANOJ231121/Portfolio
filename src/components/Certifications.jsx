@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useScrollProgress from '../hooks/useScrollProgress';
 
 const certifications = [
@@ -30,9 +30,26 @@ function ease(t) {
 }
 
 export default function Certifications() {
-  const [ref, progress, inView] = useScrollProgress();
+  const [ref, progress] = useScrollProgress();
   const [activeCert, setActiveCert] = useState(null);
-  const p = inView ? ease(progress) : 0;
+  const p = ease(progress);
+
+  // Manage Lenis scroll locking while modal is active
+  useEffect(() => {
+    if (activeCert) {
+      window.lenis?.stop();
+      const onKeyDown = (e) => {
+        if (e.key === 'Escape') setActiveCert(null);
+      };
+      window.addEventListener('keydown', onKeyDown);
+      return () => {
+        window.removeEventListener('keydown', onKeyDown);
+        window.lenis?.start();
+      };
+    } else {
+      window.lenis?.start();
+    }
+  }, [activeCert]);
 
   return (
     <section className="certs" id="certifications" ref={ref}>
@@ -41,8 +58,8 @@ export default function Certifications() {
           <span
             className="section-tag"
             style={{
-              opacity: p === 0 ? 1 : Math.min(p * 4, 1),
-              transform: p === 0 ? 'none' : `translateY(${(1 - p) * 30}px)`,
+              opacity: p >= 1 ? 1 : Math.min(p * 4, 1),
+              transform: p >= 1 ? 'none' : `translateY(${(1 - p) * 30}px)`,
             }}
           >
             03.5 / Certifications
@@ -50,14 +67,14 @@ export default function Certifications() {
           <h2
             className="section-title"
             style={{
-              clipPath: p === 0 ? 'none' : `inset(0 0 ${(1 - p) * 100}% 0)`,
+              clipPath: p >= 1 ? 'none' : `inset(0 0 ${(1 - p) * 100}% 0)`,
             }}
           >
             Certifications <span className="green">& Awards</span>
           </h2>
           <div
             style={{
-              width: p === 0 ? '0px' : `${p * 80}px`,
+              width: `${p * 80}px`,
               height: '2px',
               background: 'var(--green)',
               marginTop: '16px',
@@ -86,11 +103,11 @@ export default function Certifications() {
                   }
                 }}
                 style={{
-                  transform: p === 0
+                  transform: certP >= 1
                     ? 'none'
                     : `perspective(700px) rotateY(${rotate}deg) translateY(${yOffset}px)`,
-                  opacity: p === 0 ? 1 : certP,
-                  filter: p === 0 ? 'none' : `blur(${(1 - certP) * 4}px)`,
+                  opacity: certP,
+                  filter: certP >= 1 ? 'none' : `blur(${(1 - certP) * 4}px)`,
                   cursor: 'pointer',
                 }}
               >
@@ -122,10 +139,12 @@ export default function Certifications() {
         <div 
           className="cert-modal-overlay" 
           onClick={() => setActiveCert(null)}
+          data-lenis-prevent
         >
           <div 
             className="cert-modal-content" 
             onClick={(e) => e.stopPropagation()}
+            data-lenis-prevent
           >
             <button 
               className="cert-modal-close" 

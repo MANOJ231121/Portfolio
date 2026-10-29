@@ -39,8 +39,8 @@ function ease(t) {
 }
 
 export default function Projects() {
-  const [ref, progress, inView] = useScrollProgress();
-  const p = inView ? ease(progress) : 0;
+  const [ref, progress] = useScrollProgress();
+  const p = ease(progress);
 
   return (
     <section className="projects" id="projects" ref={ref}>
@@ -49,8 +49,8 @@ export default function Projects() {
           <span
             className="section-tag"
             style={{
-              opacity: p === 0 ? 1 : Math.min(p * 5, 1),
-              transform: p === 0 ? 'none' : `translateX(${(1 - p) * -60}px)`,
+              opacity: p >= 1 ? 1 : Math.min(p * 5, 1),
+              transform: p >= 1 ? 'none' : `translateX(${(1 - p) * -60}px)`,
             }}
           >
             02 / Projects
@@ -58,14 +58,14 @@ export default function Projects() {
           <h2
             className="section-title"
             style={{
-              clipPath: p === 0 ? 'none' : `inset(0 ${(1 - p) * 100}% 0 0)`,
+              clipPath: p >= 1 ? 'none' : `inset(0 ${(1 - p) * 100}% 0 0)`,
             }}
           >
             Featured <span className="green">Work</span>
           </h2>
           <div
             style={{
-              width: p === 0 ? '0px' : `${p * 80}px`,
+              width: `${p * 80}px`,
               height: '2px',
               background: 'var(--green)',
               marginTop: '16px',
@@ -77,7 +77,7 @@ export default function Projects() {
           <div
             className="sweep-line"
             style={{
-              width: p === 0 ? '0%' : `${p * 110}%`,
+              width: `${p * 110}%`,
               opacity: p > 0.05 ? 1 : 0,
             }}
           />
@@ -94,14 +94,14 @@ export default function Projects() {
                 key={project.id}
                 href={project.link}
                 className="project-card"
-                target="_blank"
-                rel="noopener noreferrer"
+                target={project.link !== '#' ? '_blank' : undefined}
+                rel={project.link !== '#' ? 'noopener noreferrer' : undefined}
                 style={{
-                  transform: p === 0
+                  transform: cardP >= 1
                     ? 'none'
                     : `perspective(800px) rotateX(${(1 - cardP) * (isEven ? -25 : 25)}deg) rotateY(${(1 - cardP) * (isEven ? 8 : -8)}deg) translateY(${(1 - cardP) * 80}px) scale(${0.8 + cardP * 0.2})`,
-                  opacity: p === 0 ? 1 : cardP,
-                  filter: p === 0 ? 'none' : `blur(${(1 - cardP) * 4}px)`,
+                  opacity: cardP,
+                  filter: cardP >= 1 ? 'none' : `blur(${(1 - cardP) * 4}px)`,
                 }}
               >
                 <div className="project-image">
@@ -110,6 +110,10 @@ export default function Projects() {
                       src={project.image}
                       alt={project.title}
                       className="project-image-img"
+                      style={{
+                        transform: `scale(${1.08 + (1 - cardP) * 0.08}) translateY(${(1 - cardP) * -18}px)`,
+                        transition: 'transform 0.25s ease-out',
+                      }}
                     />
                   ) : (
                     <div
@@ -138,7 +142,9 @@ export default function Projects() {
                   <p className="project-desc">{project.description}</p>
                   <div className="project-tags">
                     {project.tags.map((tag) => (
-                      <span key={tag} className="project-tag">{tag}</span>
+                      <span key={tag} className="project-tag">
+                        {tag}
+                      </span>
                     ))}
                   </div>
                 </div>

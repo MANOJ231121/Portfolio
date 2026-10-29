@@ -6,13 +6,15 @@ export default function Hero() {
   const scrollIndicatorRef = useRef(null);
   const headingRef = useRef(null);
 
+  // Entrance animation on page load
   useEffect(() => {
     const timer = setTimeout(() => {
       heroRef.current?.classList.add('animate-in');
-    }, 100);
+    }, 50);
     return () => clearTimeout(timer);
   }, []);
 
+  // Continuous interactive scroll transitions (zoom, tilt, scatter, rotate, warp)
   useEffect(() => {
     const hero = heroRef.current;
     const content = contentRef.current;
@@ -21,13 +23,9 @@ export default function Hero() {
     if (!hero || !content) return;
 
     let ticking = false;
-    let ready = false;
-
-    // Wait for entrance animation to finish before scroll takes over
-    const readyTimer = setTimeout(() => { ready = true; }, 1200);
 
     const onScroll = () => {
-      if (ticking || !ready) return;
+      if (ticking) return;
       ticking = true;
 
       requestAnimationFrame(() => {
@@ -35,12 +33,10 @@ export default function Hero() {
         const vh = window.innerHeight;
         const progress = Math.min(scrollY / (vh * 0.6), 1);
 
-        const heroEl = hero;
         const ease = progress * progress;
+        hero.style.setProperty('--scroll', ease);
 
-        heroEl.style.setProperty('--scroll', ease);
-
-        // Main content: zoom in + tilt + blur + fade
+        // Main content: 3D zoom + tilt + blur + fade
         const scale = 1 + ease * 0.8;
         const rotateY = ease * 25;
         const rotateX = ease * -8;
@@ -57,9 +53,9 @@ export default function Hero() {
           translate3d(${translateX}px, ${translateY}px, 0)
         `;
         content.style.opacity = Math.max(0, opacity);
-        content.style.filter = `blur(${blur}px)`;
+        content.style.filter = blur > 0.05 ? `blur(${blur}px)` : 'none';
 
-        // Heading lines scatter apart
+        // Heading lines scatter apart in real-time
         if (heading) {
           const lines = heading.querySelectorAll('.hero-line');
           lines.forEach((line, i) => {
@@ -101,11 +97,22 @@ export default function Hero() {
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
+    // Run once on mount to establish position
+    onScroll();
+
     return () => {
       window.removeEventListener('scroll', onScroll);
-      clearTimeout(readyTimer);
     };
   }, []);
+
+  const handleScrollTo = (target) => (e) => {
+    e.preventDefault();
+    if (window.lenis) {
+      window.lenis.scrollTo(target, { offset: -70, duration: 1.2 });
+    } else {
+      document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <section className="hero" id="hero" ref={heroRef}>
@@ -128,23 +135,23 @@ export default function Hero() {
             on building exceptional digital experiences and accessible, human-centered products.
           </p>
           <div className="hero-buttons">
-            <a href="#projects" className="btn btn-primary">
+            <a href="#projects" className="btn btn-primary" onClick={handleScrollTo('#projects')}>
               View My Work
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M7 17L17 7M17 7H7M17 7V17" />
               </svg>
             </a>
-            <a href="#contact" className="btn btn-outline">
+            <a href="#contact" className="btn btn-outline" onClick={handleScrollTo('#contact')}>
               Get In Touch
             </a>
           </div>
           <div className="hero-stats">
-            <div className="stat" data-animate="fade-up" data-delay="5">
+            <div className="stat">
               <span className="stat-number">1</span>
               <span className="stat-label">Internship</span>
             </div>
             <div className="stat-divider" />
-            <div className="stat" data-animate="fade-up" data-delay="6">
+            <div className="stat">
               <span className="stat-number">3+</span>
               <span className="stat-label">Projects Built</span>
             </div>

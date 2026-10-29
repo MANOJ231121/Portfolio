@@ -5,10 +5,24 @@ export default function Navbar() {
   const [active, setActive] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', onScroll);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  const handleNavClick = (target) => (e) => {
+    e.preventDefault();
+    setActive(false);
+    if (window.lenis) {
+      window.lenis.scrollTo(target, { offset: -70, duration: 1.2 });
+    } else {
+      if (target === 0 || target === '#') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
 
   const links = [
     { label: 'About', href: '#about' },
@@ -21,19 +35,19 @@ export default function Navbar() {
   return (
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="container">
-        <a href="#" className="logo">
+        <a href="#" className="logo" onClick={handleNavClick(0)}>
           Portfolio<span>.</span>
         </a>
         <ul className={`nav-links ${active ? 'open' : ''}`}>
           {links.map((link) => (
             <li key={link.href}>
-              <a href={link.href} onClick={() => setActive(false)}>
+              <a href={link.href} onClick={handleNavClick(link.href)}>
                 {link.label}
               </a>
             </li>
           ))}
           <li>
-            <a href="#contact" className="nav-cta" onClick={() => setActive(false)}>
+            <a href="#contact" className="nav-cta" onClick={handleNavClick('#contact')}>
               Let's Talk
             </a>
           </li>
@@ -41,6 +55,7 @@ export default function Navbar() {
         <div
           className={`hamburger ${active ? 'active' : ''}`}
           onClick={() => setActive(!active)}
+          aria-label="Toggle navigation menu"
         >
           <span />
           <span />

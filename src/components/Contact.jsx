@@ -6,8 +6,8 @@ function ease(t) {
 }
 
 export default function Contact() {
-  const [ref, progress, inView] = useScrollProgress();
-  const p = inView ? ease(progress) : 0;
+  const [ref, progress] = useScrollProgress();
+  const p = ease(progress);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -42,7 +42,7 @@ export default function Contact() {
       } else {
         setStatus({ submitting: false, success: null, error: data.message || "Failed to send message. Please try again." });
       }
-    } catch (err) {
+    } catch {
       setStatus({ submitting: false, success: null, error: "Connection error. Please try again later." });
     }
   };
@@ -54,8 +54,8 @@ export default function Contact() {
           <span
             className="section-tag"
             style={{
-              opacity: p === 0 ? 1 : Math.min(p * 5, 1),
-              transform: p === 0 ? 'none' : `translateY(${(1 - p) * 30}px)`,
+              opacity: p >= 1 ? 1 : Math.min(p * 5, 1),
+              transform: p >= 1 ? 'none' : `translateY(${(1 - p) * 30}px)`,
             }}
           >
             04 / Contact
@@ -63,7 +63,7 @@ export default function Contact() {
           <h2
             className="section-title"
             style={{
-              clipPath: p === 0 ? 'none' : `inset(0 0 ${(1 - p) * 100}% 0)`,
+              clipPath: p >= 1 ? 'none' : `inset(0 0 ${(1 - p) * 100}% 0)`,
             }}
           >
             Let's Work <span className="green">Together</span>
@@ -71,8 +71,8 @@ export default function Contact() {
           <p
             className="section-sub"
             style={{
-              opacity: p === 0 ? 1 : Math.max(0, (p - 0.1) * 3),
-              transform: p === 0 ? 'none' : `translateY(${Math.max(0, (1 - p) * 20)}px)`,
+              opacity: p >= 1 ? 1 : Math.max(0, (p - 0.1) * 3),
+              transform: p >= 1 ? 'none' : `translateY(${Math.max(0, (1 - p) * 20)}px)`,
             }}
           >
             Have a project in mind or just want to chat? Feel free to reach out.
@@ -80,7 +80,7 @@ export default function Contact() {
           </p>
           <div
             style={{
-              width: p === 0 ? '0px' : `${p * 80}px`,
+              width: `${p * 80}px`,
               height: '2px',
               background: 'var(--green)',
               marginTop: '16px',
@@ -121,10 +121,10 @@ export default function Contact() {
                   key={i}
                   className="contact-card"
                   style={{
-                    transform: p === 0
+                    transform: cardP >= 1
                       ? 'none'
                       : `translateX(${(1 - cardP) * -100}px) rotate(${(1 - cardP) * -3}deg)`,
-                    opacity: p === 0 ? 1 : cardP,
+                    opacity: cardP,
                   }}
                 >
                   <div className="contact-card-icon">{card.icon}</div>
@@ -147,8 +147,8 @@ export default function Contact() {
             <div
               className="contact-socials"
               style={{
-                opacity: p === 0 ? 1 : Math.max(0, (p - 0.35) * 3),
-                transform: p === 0 ? 'none' : `translateX(${Math.max(0, (1 - p) * -60)}px)`,
+                opacity: p >= 1 ? 1 : Math.max(0, (p - 0.35) * 3),
+                transform: p >= 1 ? 'none' : `translateX(${Math.max(0, (1 - p) * -60)}px)`,
               }}
             >
               {[
@@ -166,8 +166,8 @@ export default function Contact() {
                     className="social-link"
                     aria-label={social.label}
                     style={{
-                      transform: p === 0 ? 'none' : `scale(${sP}) rotate(${(1 - sP) * 90}deg)`,
-                      opacity: p === 0 ? 1 : sP,
+                      transform: sP >= 1 ? 'none' : `scale(${sP}) rotate(${(1 - sP) * 90}deg)`,
+                      opacity: sP,
                     }}
                   >
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
@@ -191,8 +191,8 @@ export default function Contact() {
                     key={field.id}
                     className="form-group"
                     style={{
-                      clipPath: p === 0 ? 'none' : `inset(${(1 - fP) * 100}% 0 0 0)`,
-                      opacity: p === 0 ? 1 : fP,
+                      clipPath: fP >= 1 ? 'none' : `inset(${(1 - fP) * 100}% 0 0 0)`,
+                      opacity: fP,
                     }}
                   >
                     <label htmlFor={field.id}>{field.label}</label>
@@ -212,8 +212,8 @@ export default function Contact() {
             <div
               className="form-group"
               style={{
-                clipPath: p === 0 ? 'none' : `inset(0 ${(1 - Math.max(0, Math.min(1, (p - 0.32) / 0.2))) * 100}% 0 0)`,
-                opacity: p === 0 ? 1 : Math.max(0, Math.min(1, (p - 0.32) / 0.2)),
+                clipPath: p >= 1 ? 'none' : `inset(0 ${(1 - Math.max(0, Math.min(1, (p - 0.32) / 0.2))) * 100}% 0 0)`,
+                opacity: Math.max(0, Math.min(1, (p - 0.32) / 0.2)),
               }}
             >
               <label htmlFor="subject">Subject</label>
@@ -230,8 +230,8 @@ export default function Contact() {
             <div
               className="form-group"
               style={{
-                clipPath: p === 0 ? 'none' : `inset(0 ${(1 - Math.max(0, Math.min(1, (p - 0.38) / 0.2))) * 100}% 0 0)`,
-                opacity: p === 0 ? 1 : Math.max(0, Math.min(1, (p - 0.38) / 0.2)),
+                clipPath: p >= 1 ? 'none' : `inset(0 ${(1 - Math.max(0, Math.min(1, (p - 0.38) / 0.2))) * 100}% 0 0)`,
+                opacity: Math.max(0, Math.min(1, (p - 0.38) / 0.2)),
               }}
             >
               <label htmlFor="message">Message</label>
@@ -255,13 +255,16 @@ export default function Contact() {
                 {status.error}
               </div>
             )}
-            <div
-              style={{
-                opacity: p === 0 ? 1 : Math.max(0, (p - 0.5) * 3),
-                transform: p === 0 ? 'none' : `translateY(${Math.max(0, (1 - p) * 40)}px)`,
-              }}
-            >
-              <button type="submit" className="btn btn-primary btn-full" disabled={status.submitting}>
+            <div>
+              <button
+                type="submit"
+                className="btn btn-primary btn-full"
+                disabled={status.submitting}
+                style={{
+                  opacity: p >= 1 ? 1 : Math.max(0, (p - 0.5) * 3),
+                  transform: p >= 1 ? 'none' : `translateY(${Math.max(0, (1 - p) * 40)}px)`,
+                }}
+              >
                 {status.submitting ? 'Sending...' : 'Send Message'}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
@@ -271,7 +274,7 @@ export default function Contact() {
             <div
               className="form-glow-line"
               style={{
-                width: p === 0 ? '0%' : `${p * 100}%`,
+                width: `${p * 100}%`,
                 opacity: p > 0.1 ? 0.6 : 0,
               }}
             />
