@@ -59,6 +59,20 @@ export default function Footer() {
                   {link}
                 </a>
               ))}
+              <a
+                href={`${import.meta.env.BASE_URL}resume.pdf`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  opacity: inView ? 1 : 0,
+                  transform: inView ? 'none' : 'translateX(20px)',
+                  transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s',
+                  color: 'var(--green)',
+                  fontWeight: 600,
+                }}
+              >
+                Resume (PDF) ↗
+              </a>
             </div>
             <div className="footer-col">
               <h4>Social</h4>

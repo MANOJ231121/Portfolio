@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import useScrollProgress from '../hooks/useScrollProgress';
 
 const certifications = [
@@ -32,24 +33,38 @@ function ease(t) {
 export default function Certifications() {
   const [ref, progress] = useScrollProgress();
   const [activeCert, setActiveCert] = useState(null);
+  const [zoomed, setZoomed] = useState(false);
   const p = ease(progress);
 
-  // Manage Lenis scroll locking while modal is active
+  const closeLightbox = useCallback(() => {
+    setZoomed(false);
+    setActiveCert(null);
+  }, []);
+
+  const openLightbox = (cert) => {
+    setZoomed(false);
+    setActiveCert(cert);
+  };
+
+  // Portal the lightbox to document.body so it is not trapped by Lenis/skew transforms.
   useEffect(() => {
-    if (activeCert) {
-      window.lenis?.stop();
-      const onKeyDown = (e) => {
-        if (e.key === 'Escape') setActiveCert(null);
-      };
-      window.addEventListener('keydown', onKeyDown);
-      return () => {
-        window.removeEventListener('keydown', onKeyDown);
-        window.lenis?.start();
-      };
-    } else {
+    if (!activeCert) return;
+
+    const html = document.documentElement;
+    html.classList.add('cert-lightbox-open');
+    window.lenis?.stop();
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    };
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      html.classList.remove('cert-lightbox-open');
       window.lenis?.start();
-    }
-  }, [activeCert]);
+    };
+  }, [activeCert, closeLightbox]);
 
   return (
     <section className="certs" id="certifications" ref={ref}>
@@ -93,13 +108,13 @@ export default function Certifications() {
               <div
                 key={cert.title}
                 className="cert-card"
-                onClick={() => setActiveCert(cert)}
+                onClick={() => openLightbox(cert)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    setActiveCert(cert);
+                    openLightbox(cert);
                   }
                 }}
                 style={{
@@ -135,36 +150,50 @@ export default function Certifications() {
           })}
         </div>
       </div>
-      {activeCert && (
-        <div 
-          className="cert-modal-overlay" 
-          onClick={() => setActiveCert(null)}
-          data-lenis-prevent
-        >
-          <div 
-            className="cert-modal-content" 
-            onClick={(e) => e.stopPropagation()}
-            data-lenis-prevent
+      {activeCert &&
+        createPortal(
+          <div
+            className="cert-modal-overlay"
+            onClick={closeLightbox}
+            role="dialog"
+            aria-modal="true"
+            aria-label={activeCert.title}
           >
-            <button 
-              className="cert-modal-close" 
-              onClick={() => setActiveCert(null)}
-              aria-label="Close modal"
+            <div
+              className={`cert-modal-content ${zoomed ? 'is-zoomed' : ''}`}
+              onClick={(e) => e.stopPropagation()}
             >
-              &times;
-            </button>
-            <img 
-              src={activeCert.thumb} 
-              alt={activeCert.title} 
-              className="cert-modal-image" 
-            />
-            <div className="cert-modal-info">
-              <h3>{activeCert.title}</h3>
-              <p>{activeCert.issuer} &bull; {activeCert.year}</p>
+              <button
+                className="cert-modal-close"
+                onClick={closeLightbox}
+                aria-label="Close certificate"
+                type="button"
+              >
+                &times;
+              </button>
+              <button
+                type="button"
+                className={`cert-modal-image-btn ${zoomed ? 'is-zoomed' : ''}`}
+                onClick={() => setZoomed((v) => !v)}
+                aria-label={zoomed ? 'Zoom out certificate' : 'Zoom in certificate'}
+              >
+                <img
+                  src={activeCert.thumb}
+                  alt={activeCert.title}
+                  className={`cert-modal-image ${zoomed ? 'is-zoomed' : ''}`}
+                />
+              </button>
+              <div className="cert-modal-info">
+                <h3>{activeCert.title}</h3>
+                <p>{activeCert.issuer} &bull; {activeCert.year}</p>
+                <span className="cert-zoom-hint">
+                  {zoomed ? 'Click image to zoom out' : 'Click image to zoom in'}
+                </span>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </section>
   );
 }

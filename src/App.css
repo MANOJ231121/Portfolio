@@ -141,6 +141,16 @@
 .contact-card-icon{color:var(--green);margin-bottom:4px}
 .contact-card-label{font-size:.75rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray)}
 .contact-card-value{font-size:1rem;color:var(--white);font-weight:500}
+.contact-card-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.resume-card{border-color:rgba(185,255,102,.18);background:linear-gradient(180deg,rgba(185,255,102,.06),var(--dark))}
+.resume-badge{font-size:.65rem;font-weight:700;letter-spacing:1.2px;padding:4px 8px;border-radius:999px;background:rgba(185,255,102,.12);color:var(--green);border:1px solid rgba(185,255,102,.25)}
+.resume-card-actions{display:flex;flex-direction:column;gap:14px}
+.resume-btn-group{display:flex;flex-wrap:wrap;gap:10px}
+.resume-action-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;font-size:.85rem;font-weight:600;transition:transform .2s,background .2s,border-color .2s,color .2s}
+.resume-action-btn.view-btn{background:var(--green);color:var(--black)}
+.resume-action-btn.view-btn:hover{transform:translateY(-2px);background:var(--green-dim)}
+.resume-action-btn.download-btn{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.12)}
+.resume-action-btn.download-btn:hover{border-color:var(--green);color:var(--green);transform:translateY(-2px)}
 .contact-socials{display:flex;gap:12px;margin-top:8px}
 .social-link{width:48px;height:48px;border-radius:12px;background:var(--dark);border:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;color:var(--gray-light);transition:all .3s}
 .social-link:hover{border-color:var(--green);color:var(--green);transform:translateY(-3px);background:rgba(185,255,102,.05)}
@@ -249,42 +259,79 @@
   .footer-bottom{flex-direction:column;gap:16px;text-align:center}
 }
 
-/* ============ CERTIFICATIONS MODAL ============ */
+/* ============ CERTIFICATIONS LIGHTBOX ============ */
+html.cert-lightbox-open,
+html.cert-lightbox-open body {
+  overflow: hidden;
+}
+
+html.cert-lightbox-open .lenis-skew-wrapper {
+  transform: none !important;
+  will-change: auto;
+}
+
 .cert-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
+  height: 100dvh;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(10px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 20000;
   opacity: 0;
-  animation: fadeIn 0.3s forwards ease-out;
+  animation: certFadeIn 0.28s forwards ease-out;
+  overflow: auto;
 }
 
 .cert-modal-content {
   position: relative;
-  max-width: 90%;
-  max-height: 85vh;
+  max-width: min(1100px, 92vw);
+  max-height: 92dvh;
+  margin: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  transform: scale(0.9);
-  animation: zoomIn 0.3s forwards cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(0.72);
+  animation: certZoomIn 0.38s forwards cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cert-modal-content.is-zoomed {
+  max-width: min(1600px, 98vw);
+  max-height: none;
+}
+
+.cert-modal-image-btn {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+  max-width: 100%;
+}
+
+.cert-modal-image-btn.is-zoomed {
+  cursor: zoom-out;
 }
 
 .cert-modal-image {
   max-width: 100%;
-  max-height: 70vh;
+  max-height: 72dvh;
   border-radius: 8px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
   object-fit: contain;
+  transform-origin: center center;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.35s ease;
+}
+
+.cert-modal-image.is-zoomed {
+  max-height: none;
+  width: min(1600px, 96vw);
+  transform: scale(1.12);
 }
 
 .cert-modal-close {
@@ -298,6 +345,7 @@
   cursor: pointer;
   transition: color 0.2s, transform 0.2s;
   line-height: 1;
+  z-index: 1;
 }
 
 .cert-modal-close:hover {
@@ -322,13 +370,22 @@
   color: var(--gray);
 }
 
-@keyframes fadeIn {
+.cert-zoom-hint {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-light);
+}
+
+@keyframes certFadeIn {
   to {
     opacity: 1;
   }
 }
 
-@keyframes zoomIn {
+@keyframes certZoomIn {
   to {
     transform: scale(1);
   }

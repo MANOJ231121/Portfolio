@@ -113,13 +113,29 @@ export default function Contact() {
                 isLink: true,
                 link: 'https://maps.app.goo.gl/ApWQiBQMKa3Rwwr2A',
               },
+              {
+                icon: (
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                  </svg>
+                ),
+                label: 'Resume / Curriculum Vitae',
+                value: 'Manoj Joshi Resume.pdf',
+                isResume: true,
+                viewLink: `${import.meta.env.BASE_URL}resume.pdf`,
+                downloadLink: `${import.meta.env.BASE_URL}resume.pdf`,
+              },
             ].map((card, i) => {
-              const cardStart = 0.15 + i * 0.1;
+              const cardStart = 0.15 + i * 0.08;
               const cardP = Math.max(0, Math.min(1, (p - cardStart) / 0.25));
               return (
                 <div
                   key={i}
-                  className="contact-card"
+                  className={`contact-card ${card.isResume ? 'resume-card' : ''}`}
                   style={{
                     transform: cardP >= 1
                       ? 'none'
@@ -127,9 +143,42 @@ export default function Contact() {
                     opacity: cardP,
                   }}
                 >
-                  <div className="contact-card-icon">{card.icon}</div>
+                  <div className="contact-card-header">
+                    <div className="contact-card-icon">{card.icon}</div>
+                    {card.isResume && <span className="resume-badge">PDF</span>}
+                  </div>
                   <span className="contact-card-label">{card.label}</span>
-                  {card.isLink ? (
+                  {card.isResume ? (
+                    <div className="resume-card-actions">
+                      <span className="contact-card-value">{card.value}</span>
+                      <div className="resume-btn-group">
+                        <a
+                          href={card.viewLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="resume-action-btn view-btn"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                          View
+                        </a>
+                        <a
+                          href={card.downloadLink}
+                          download="Manoj_Joshi_Resume.pdf"
+                          className="resume-action-btn download-btn"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                          </svg>
+                          Download
+                        </a>
+                      </div>
+                    </div>
+                  ) : card.isLink ? (
                     <a
                       href={card.link}
                       target={card.label === 'Location' ? '_blank' : undefined}
