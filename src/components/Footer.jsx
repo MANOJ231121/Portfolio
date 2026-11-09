@@ -1,19 +1,12 @@
 import useScrollProgress from '../hooks/useScrollProgress';
+import scrollToSection from '../utils/scrollTo';
 
 export default function Footer() {
   const [ref, , inView] = useScrollProgress();
 
   const handleNavClick = (target) => (e) => {
     e.preventDefault();
-    if (window.lenis) {
-      window.lenis.scrollTo(target, { offset: -70, duration: 1.2 });
-    } else {
-      if (target === 0 || target === '#') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+    scrollToSection(target);
   };
 
   return (

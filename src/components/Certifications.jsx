@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import useScrollProgress from '../hooks/useScrollProgress';
 
@@ -34,6 +34,7 @@ export default function Certifications() {
   const [ref, progress] = useScrollProgress();
   const [activeCert, setActiveCert] = useState(null);
   const [zoomed, setZoomed] = useState(false);
+  const lastFocusedRef = useRef(null);
   const p = ease(progress);
 
   const closeLightbox = useCallback(() => {
@@ -41,18 +42,21 @@ export default function Certifications() {
     setActiveCert(null);
   }, []);
 
-  const openLightbox = (cert) => {
+  const openLightbox = useCallback((cert) => {
+    lastFocusedRef.current = document.activeElement;
     setZoomed(false);
     setActiveCert(cert);
-  };
+  }, []);
 
-  // Portal the lightbox to document.body so it is not trapped by Lenis/skew transforms.
+  // Portal the lightbox to document.body so it is not trapped by section transforms.
   useEffect(() => {
     if (!activeCert) return;
 
-    const html = document.documentElement;
-    html.classList.add('cert-lightbox-open');
-    window.lenis?.stop();
+    const previousOverflow = document.body.style.overflow;
+
+    // Lock body scroll while the lightbox is open.
+    document.body.style.overflow = 'hidden';
+    document.documentElement.classList.add('cert-lightbox-open');
 
     const onKeyDown = (e) => {
       if (e.key === 'Escape') closeLightbox();
@@ -61,8 +65,9 @@ export default function Certifications() {
 
     return () => {
       window.removeEventListener('keydown', onKeyDown);
-      html.classList.remove('cert-lightbox-open');
-      window.lenis?.start();
+      document.documentElement.classList.remove('cert-lightbox-open');
+      document.body.style.overflow = previousOverflow;
+      lastFocusedRef.current?.focus?.({ preventScroll: true });
     };
   }, [activeCert, closeLightbox]);
 

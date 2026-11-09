@@ -1,4 +1,25 @@
 import { useEffect, useRef } from 'react';
+import {
+  SiReact,
+  SiNextdotjs,
+  SiTypescript,
+  SiTailwindcss,
+  SiHtml5,
+  SiJavascript,
+  SiNodedotjs,
+  SiPython,
+  SiExpress,
+  SiPostgresql,
+  SiMongodb,
+  SiGit,
+  SiDocker,
+  SiFigma,
+  SiLinux,
+  SiGithubactions,
+  SiGooglesearchconsole,
+  SiTestinglibrary,
+} from 'react-icons/si';
+import { FaCode, FaCloud, FaPenNib, FaMobileAlt, FaBolt, FaSyncAlt } from 'react-icons/fa';
 import useScrollProgress from '../hooks/useScrollProgress';
 
 const skills = [
@@ -20,6 +41,34 @@ const skills = [
   },
 ];
 
+// Logos shown next to each name in the running marquee.
+const marqueeSkills = [
+  { name: 'React', Icon: SiReact },
+  { name: 'Next.js', Icon: SiNextdotjs },
+  { name: 'TypeScript', Icon: SiTypescript },
+  { name: 'Tailwind CSS', Icon: SiTailwindcss },
+  { name: 'HTML/CSS', Icon: SiHtml5 },
+  { name: 'JavaScript', Icon: SiJavascript },
+  { name: 'Node.js', Icon: SiNodedotjs },
+  { name: 'Python', Icon: SiPython },
+  { name: 'Express', Icon: SiExpress },
+  { name: 'PostgreSQL', Icon: SiPostgresql },
+  { name: 'MongoDB', Icon: SiMongodb },
+  { name: 'REST APIs', Icon: FaCloud },
+  { name: 'Git', Icon: SiGit },
+  { name: 'Docker', Icon: SiDocker },
+  { name: 'Figma', Icon: SiFigma },
+  { name: 'VS Code', Icon: FaCode },
+  { name: 'Linux', Icon: SiLinux },
+  { name: 'CI/CD', Icon: SiGithubactions },
+  { name: 'UI/UX Design', Icon: FaPenNib },
+  { name: 'Responsive Design', Icon: FaMobileAlt },
+  { name: 'SEO', Icon: SiGooglesearchconsole },
+  { name: 'Performance Optimization', Icon: FaBolt },
+  { name: 'Agile', Icon: FaSyncAlt },
+  { name: 'Testing', Icon: SiTestinglibrary },
+];
+
 function ease(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
@@ -29,35 +78,49 @@ export default function Skills() {
   const p = ease(progress);
   const marqueeRef = useRef(null);
 
-  // Velocity-driven kinetic marquee acceleration (lenis.dev signature effect)
+  // Scroll-velocity driven marquee acceleration (native scroll, no Lenis).
   useEffect(() => {
-    if (!window.lenis) return;
     const marqueeEl = marqueeRef.current;
     if (!marqueeEl) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    let rafId = 0;
+    let lastY = window.scrollY;
     let timeout;
 
-    const onScroll = (e) => {
-      const v = e.velocity || 0;
+    const update = () => {
+      const y = window.scrollY;
+      const velocity = y - lastY;
+      lastY = y;
+
       // Kinetic velocity tilt on marquee text
-      const skew = Math.max(-5, Math.min(5, v * 0.08));
+      const skew = Math.max(-5, Math.min(5, velocity * 0.12));
       marqueeEl.style.transform = skew !== 0 ? `skewX(${skew.toFixed(2)}deg)` : 'none';
 
-      // Accelerate CSS marquee animation speed dynamically with scroll velocity
+      // Accelerate the CSS marquee animation speed with scroll velocity
       const anims = marqueeEl.getAnimations?.();
       if (anims && anims.length > 0) {
-        anims[0].playbackRate = 1 + Math.min(4, Math.abs(v) * 0.12);
+        anims[0].playbackRate = 1 + Math.min(4, Math.abs(velocity) * 0.12);
         clearTimeout(timeout);
         timeout = setTimeout(() => {
           if (anims[0]) anims[0].playbackRate = 1;
-          if (marqueeEl) marqueeEl.style.transform = 'none';
+          marqueeEl.style.transform = 'none';
         }, 150);
       }
+
+      rafId = 0;
     };
 
-    window.lenis.on('scroll', onScroll);
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+
     return () => {
-      window.lenis?.off('scroll', onScroll);
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(rafId);
       clearTimeout(timeout);
     };
   }, []);
@@ -155,14 +218,12 @@ export default function Skills() {
         >
           <div className="marquee">
             <div className="marquee-content" ref={marqueeRef}>
-              {[...skills.flatMap((g) => g.items), ...skills.flatMap((g) => g.items)].map(
-                (skill, i) => (
-                  <span key={i} className="marquee-item">
-                    {skill}
-                    <span className="marquee-star">&#10038;</span>
-                  </span>
-                )
-              )}
+              {[...marqueeSkills, ...marqueeSkills].map(({ name, Icon }, i) => (
+                <span key={`${name}-${i}`} className="marquee-item">
+                  <Icon className="marquee-icon" aria-hidden="true" />
+                  {name}
+                </span>
+              ))}
             </div>
           </div>
         </div>

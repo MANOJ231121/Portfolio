@@ -1,0 +1,139 @@
+.circular-testimonials {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  border-radius: 24px;
+}
+
+.circular-testimonials:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 8px;
+}
+
+.circular-testimonials .testimonial-container {
+  width: 100%;
+  max-width: 64rem;
+  padding: 2rem 0;
+}
+
+.circular-testimonials .testimonial-grid {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.circular-testimonials .image-container {
+  position: relative;
+  width: 100%;
+  height: 24rem;
+  perspective: 1000px;
+}
+
+.circular-testimonials .testimonial-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(185, 255, 102, 0.14);
+}
+
+.circular-testimonials .testimonial-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.circular-testimonials .name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.circular-testimonials .designation {
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+.circular-testimonials .quote {
+  line-height: 1.75;
+}
+
+.circular-testimonials .project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.circular-testimonials .project-tag {
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(185, 255, 102, 0.06);
+  color: var(--green);
+  border: 1px solid rgba(185, 255, 102, 0.1);
+}
+
+.circular-testimonials .project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding-bottom: 3px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--green);
+  border-bottom: 1px solid rgba(185, 255, 102, 0.35);
+  transition: gap 0.3s ease, border-color 0.3s ease;
+}
+
+.circular-testimonials .project-link:hover {
+  gap: 12px;
+  border-color: var(--green);
+}
+
+.circular-testimonials .project-link:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 4px;
+}
+
+.circular-testimonials .arrow-buttons {
+  display: flex;
+  gap: 1.5rem;
+  padding-top: 3rem;
+}
+
+.circular-testimonials .arrow-button {
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  border: none;
+  box-shadow: 0 8px 24px rgba(185, 255, 102, 0.18);
+}
+
+.circular-testimonials .arrow-button:hover {
+  transform: translateY(-2px);
+}
+
+.circular-testimonials .arrow-button:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+
+@media (min-width: 768px) {
+  .circular-testimonials .testimonial-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+  }
+
+  .circular-testimonials .arrow-buttons {
+    padding-top: 0;
+  }
+}

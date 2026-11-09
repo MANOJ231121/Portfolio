@@ -1,10 +1,18 @@
 import { useEffect, useRef } from 'react';
+import SpecularButton from './SpecularButton';
+import Lanyard from './Lanyard';
+import profileImg from '../assets/profile.jpg';
+import scrollToSection from '../utils/scrollTo';
+
+const aboutDetails = [
+  { label: 'Name', value: 'Manoj Chandra Joshi' },
+  { label: 'Email', value: 'manojjoshi230611@gmail.com' },
+  { label: 'Location', value: 'Champawat, Uttarakhand, India' },
+  { label: 'Availability', value: 'Open to internships & work', green: true },
+];
 
 export default function Hero() {
   const heroRef = useRef(null);
-  const contentRef = useRef(null);
-  const scrollIndicatorRef = useRef(null);
-  const headingRef = useRef(null);
 
   // Entrance animation on page load
   useEffect(() => {
@@ -14,151 +22,122 @@ export default function Hero() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Continuous interactive scroll transitions (zoom, tilt, scatter, rotate, warp)
-  useEffect(() => {
-    const hero = heroRef.current;
-    const content = contentRef.current;
-    const scrollIndicator = scrollIndicatorRef.current;
-    const heading = headingRef.current;
-    if (!hero || !content) return;
-
-    let ticking = false;
-
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-
-      requestAnimationFrame(() => {
-        const scrollY = window.scrollY;
-        const vh = window.innerHeight;
-        const progress = Math.min(scrollY / (vh * 0.6), 1);
-
-        const ease = progress * progress;
-        hero.style.setProperty('--scroll', ease);
-
-        // Main content: 3D zoom + tilt + blur + fade
-        const scale = 1 + ease * 0.8;
-        const rotateY = ease * 25;
-        const rotateX = ease * -8;
-        const translateX = ease * 60;
-        const translateY = ease * -120;
-        const opacity = 1 - ease * 1.2;
-        const blur = ease * 10;
-
-        content.style.transform = `
-          perspective(1000px)
-          scale(${scale})
-          rotateY(${rotateY}deg)
-          rotateX(${rotateX}deg)
-          translate3d(${translateX}px, ${translateY}px, 0)
-        `;
-        content.style.opacity = Math.max(0, opacity);
-        content.style.filter = blur > 0.05 ? `blur(${blur}px)` : 'none';
-
-        // Heading lines scatter apart in real-time
-        if (heading) {
-          const lines = heading.querySelectorAll('.hero-line');
-          lines.forEach((line, i) => {
-            const scatterX = (i - 1) * ease * 200;
-            const scatterY = ease * (i === 1 ? -80 : i === 0 ? 60 : 100);
-            const lineRotate = (i - 1) * ease * 15;
-            const lineScale = 1 - ease * 0.3;
-            line.style.transform = `translate(${scatterX}px, ${scatterY}px) rotate(${lineRotate}deg) scale(${lineScale})`;
-            line.style.opacity = Math.max(0, 1 - ease * 1.5);
-          });
-        }
-
-        // Scroll indicator: spin + fly up + zoom
-        if (scrollIndicator) {
-          const indicatorProgress = Math.min(scrollY / (vh * 0.15), 1);
-          const indicatorScale = 1 + indicatorProgress * 3;
-          const indicatorRotate = indicatorProgress * 360;
-          const indicatorY = indicatorProgress * -200;
-          const indicatorOpacity = 1 - indicatorProgress * 1.5;
-
-          scrollIndicator.style.transform = `
-            translateX(-50%)
-            translateY(${indicatorY}px)
-            scale(${indicatorScale})
-            rotate(${indicatorRotate}deg)
-          `;
-          scrollIndicator.style.opacity = Math.max(0, indicatorOpacity);
-        }
-
-        // Background grid: warp with perspective
-        const grid = hero.querySelector('.hero-bg-grid');
-        if (grid) {
-          grid.style.transform = `scale(${1 + ease * 0.5}) rotate(${ease * 5}deg)`;
-          grid.style.opacity = Math.max(0, 1 - ease * 1.3);
-        }
-
-        ticking = false;
-      });
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    // Run once on mount to establish position
-    onScroll();
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-    };
-  }, []);
-
-  const handleScrollTo = (target) => (e) => {
-    e.preventDefault();
-    if (window.lenis) {
-      window.lenis.scrollTo(target, { offset: -70, duration: 1.2 });
-    } else {
-      document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
-    <section className="hero" id="hero" ref={heroRef}>
+    <section className="hero hero-merged" id="hero" ref={heroRef}>
       <div className="hero-bg-grid" />
-      <div className="hero-content" ref={contentRef}>
-        <div className="container">
-          <div className="hero-badge">
-            <span className="badge-dot" />
-            Available for freelance work
-          </div>
-          <h1 className="hero-heading" ref={headingRef}>
-            <span className="hero-line">I craft</span>
-            <span className="hero-line hero-line-green">
-              digital experiences<span className="hero-dot">.</span>
-            </span>
-            <span className="hero-line">that inspire.</span>
-          </h1>
-          <p className="hero-sub">
-            An aspiring developer currently interning at Prodigy Infotech, focused
-            on building exceptional digital experiences and accessible, human-centered products.
-          </p>
-          <div className="hero-buttons">
-            <a href="#projects" className="btn btn-primary" onClick={handleScrollTo('#projects')}>
-              View My Work
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M7 17L17 7M17 7H7M17 7V17" />
-              </svg>
-            </a>
-            <a href="#contact" className="btn btn-outline" onClick={handleScrollTo('#contact')}>
-              Get In Touch
-            </a>
-          </div>
-          <div className="hero-stats">
-            <div className="stat">
-              <span className="stat-number">1</span>
-              <span className="stat-label">Internship</span>
+      <div className="hero-content">
+        <div className="container hero-layout">
+          <div className="hero-intro">
+            <div className="hero-badge">
+              <span className="badge-dot" />
+              Available for freelance work
             </div>
-            <div className="stat-divider" />
-            <div className="stat">
-              <span className="stat-number">3+</span>
-              <span className="stat-label">Projects Built</span>
+            <p className="hero-sub">
+              An aspiring developer currently interning at Prodigy Infotech, focused
+              on building exceptional digital experiences and accessible, human-centered products.
+            </p>
+            <div className="hero-buttons">
+              <SpecularButton
+                size="md"
+                radius={100}
+                tint="#b9ff66"
+                tintOpacity={1}
+                textColor="#0a0a0a"
+                lineColor="#f4ffe0"
+                baseColor="#7fae3a"
+                intensity={1.1}
+                idleIntensity={0.35}
+                shineSize={12}
+                shineFade={36}
+                thickness={1.3}
+                glow={0.9}
+                proximity={300}
+                style={{ fontWeight: 700 }}
+                onClick={() => scrollToSection('#projects')}
+              >
+                View My Work
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M7 17L17 7M17 7H7M17 7V17" />
+                </svg>
+              </SpecularButton>
+              <SpecularButton
+                size="md"
+                radius={100}
+                tint="#141414"
+                tintOpacity={0.95}
+                textColor="#f0f0f0"
+                lineColor="#b9ff66"
+                baseColor="#3a3a3a"
+                intensity={1}
+                idleIntensity={0.3}
+                shineSize={12}
+                shineFade={38}
+                thickness={1.2}
+                glow={0.9}
+                proximity={300}
+                style={{ fontWeight: 600 }}
+                onClick={() => scrollToSection('#contact')}
+              >
+                Get In Touch
+              </SpecularButton>
+            </div>
+          </div>
+
+          <aside className="hero-side">
+            <div className="hero-photo-glow" />
+            <div className="hero-lanyard">
+              <Lanyard
+                frontImage={profileImg}
+                imageFit="cover"
+                cardColor="#151515"
+                orientation="portrait"
+                finish="glossy"
+                cornerRadius={0.28}
+                size={0.62}
+                anchor="center"
+                strapLength={0.45}
+                strapColor="#b9ff66"
+                strapWidth={0.7}
+                metal="silver"
+                gravity={1}
+                damping={0.5}
+                elasticity={0.5}
+                breeze={0.6}
+                interactive
+                intro
+              />
+            </div>
+            <p className="hero-lanyard-hint">
+              Drag the card to swing <span>·</span> click to flip
+            </p>
+          </aside>
+
+          <div className="hero-about" id="about">
+            <span className="hero-about-eyebrow">01 / About</span>
+            <p className="about-lead">
+              Hello! I'm <span className="green">Manoj Chandra Joshi</span>, an aspiring
+              developer who loves turning ideas into reality through clean code
+              and thoughtful design.
+            </p>
+            <p>
+              I am a passionate developer who enjoys building responsive and user-friendly
+              web applications. I love working at the intersection of design and technology,
+              turning ideas into seamless digital experiences.
+            </p>
+            <div className="about-details">
+              {aboutDetails.map((item) => (
+                <div key={item.label} className="about-detail">
+                  <span className="detail-label">{item.label}</span>
+                  <span className={`detail-value ${item.green ? 'green' : ''}`}>
+                    {item.value}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
-      <div className="hero-scroll-indicator" ref={scrollIndicatorRef}>
+      <div className="hero-scroll-indicator">
         <div className="scroll-line" />
         <span>Scroll Down</span>
       </div>

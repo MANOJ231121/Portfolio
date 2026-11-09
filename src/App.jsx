@@ -1,150 +1,91 @@
-import { useEffect, useState, useRef } from 'react';
-import Lenis from 'lenis';
-import 'lenis/dist/lenis.css';
+import { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import About from './components/About';
 import Projects from './components/Projects';
 import Skills from './components/Skills';
 import Certifications from './components/Certifications';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import LenisHUD from './components/LenisHUD';
+import GlowCursor from './components/GlowCursor';
 import './App.css';
 
-export default function App() {
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [skewEnabled, setSkewEnabled] = useState(true);
-  const skewRef = useRef(null);
+/**
+ * Top scroll-progress indicator.
+ * Kept in its own component so App (and every section) doesn't re-render on scroll.
+ */
+function ScrollProgressBar() {
+  const [progress, setProgress] = useState(0);
 
-  // Initialize Lenis Smooth Scroll with butter-smooth exponential decay
   useEffect(() => {
-    const lenis = new Lenis({
-      autoRaf: true,
-      smoothWheel: true,
-      duration: 1.25,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      anchors: { offset: -70, duration: 1.2 },
-      touchMultiplier: 1.5,
-    });
+    let ticking = false;
 
-    window.lenis = lenis;
-
-    const handleScroll = ({ progress }) => {
-      setScrollProgress(progress);
+    const update = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      setProgress(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
+      ticking = false;
     };
 
-    lenis.on('scroll', handleScroll);
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
 
     return () => {
-      lenis.destroy();
-      delete window.lenis;
-    };
-  }, []);
-
-  // Velocity-driven kinetic skew animation (Lenis.dev signature effect)
-  useEffect(() => {
-    let rafId;
-    let currentSkew = 0;
-    let targetSkew = 0;
-
-    const onScroll = (e) => {
-      if (!skewEnabled) {
-        targetSkew = 0;
-        return;
-      }
-      // Clamped skew proportional to scroll velocity
-      const v = e.velocity || 0;
-      targetSkew = Math.max(-2.5, Math.min(2.5, v * 0.04));
-    };
-
-    const updateSkew = () => {
-      // Lerp for smooth elastic rebound
-      currentSkew += (targetSkew - currentSkew) * 0.14;
-
-      if (Math.abs(currentSkew) < 0.005) {
-        currentSkew = 0;
-      }
-
-      if (skewRef.current) {
-        skewRef.current.style.transform =
-          currentSkew === 0 ? 'none' : `skewY(${currentSkew.toFixed(3)}deg)`;
-      }
-
-      // Natural damping decay
-      targetSkew *= 0.9;
-
-      rafId = requestAnimationFrame(updateSkew);
-    };
-
-    window.lenis?.on('scroll', onScroll);
-    rafId = requestAnimationFrame(updateSkew);
-
-    return () => {
-      window.lenis?.off('scroll', onScroll);
-      cancelAnimationFrame(rafId);
-    };
-  }, [skewEnabled]);
-
-  // Cursor follower effect
-  useEffect(() => {
-    const cursor = document.querySelector('.cursor-follower');
-    if (!cursor) return;
-
-    const move = (e) => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-    };
-
-    const addHover = () => cursor.classList.add('hover');
-    const removeHover = () => cursor.classList.remove('hover');
-
-    window.addEventListener('mousemove', move);
-
-    const interactives = document.querySelectorAll(
-      'a, button, .project-card, .skill-group, .cert-card, input, textarea'
-    );
-    interactives.forEach((el) => {
-      el.addEventListener('mouseenter', addHover);
-      el.addEventListener('mouseleave', removeHover);
-    });
-
-    return () => {
-      window.removeEventListener('mousemove', move);
-      interactives.forEach((el) => {
-        el.removeEventListener('mouseenter', addHover);
-        el.removeEventListener('mouseleave', removeHover);
-      });
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
     };
   }, []);
 
   return (
+    <div
+      className="scroll-progress-bar"
+      style={{ transform: `scaleX(${progress})` }}
+    />
+  );
+}
+
+export default function App() {
+  return (
     <>
-      {/* Top glowing scroll progress indicator */}
-      <div
-        className="scroll-progress-bar"
-        style={{ transform: `scaleX(${scrollProgress})` }}
-      />
-
-      {/* Floating Lenis Telemetry HUD */}
-      <LenisHUD
-        skewEnabled={skewEnabled}
-        onToggleSkew={() => setSkewEnabled(!skewEnabled)}
-      />
-
-      <div className="cursor-follower" />
+      <ScrollProgressBar />
       <Navbar />
-
-      {/* Kinetic Skew Content Wrapper */}
-      <div className="lenis-skew-wrapper" ref={skewRef}>
+      <main>
         <Hero />
-        <About />
         <Projects />
         <Skills />
         <Certifications />
         <Contact />
         <Footer />
-      </div>
+      </main>
+      <GlowCursor
+        className="glow-cursor--page"
+        color="#b9ff66"
+        secondaryColor="#6fae2e"
+        intensity={1.15}
+        trailWidth={3}
+        linger={1.2}
+        glow={1.1}
+        hotspot={0.8}
+        followSpeed={0.75}
+        clickBurst
+        quality="medium"
+        theme="dark"
+        maxDevicePixelRatio={1.5}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 9999,
+          pointerEvents: 'none'
+        }}
+      />
     </>
   );
 }

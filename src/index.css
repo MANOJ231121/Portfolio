@@ -13,11 +13,7 @@
   --font-main:'Inter',system-ui,sans-serif;
   --font-display:'Space Grotesk',system-ui,sans-serif;
 }
-html{scrollbar-width:thin;scrollbar-color:var(--green) var(--dark)}
-html.lenis, html.lenis body { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto !important; }
-.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-.lenis.lenis-stopped { overflow: hidden; }
+html{scrollbar-width:thin;scrollbar-color:var(--green) var(--dark);overflow-x:hidden}
 
 /* Glowing neon scroll progress bar at top of window */
 .scroll-progress-bar {

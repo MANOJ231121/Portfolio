@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import SpecularButton from './SpecularButton';
+import scrollToSection from '../utils/scrollTo';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -13,15 +15,7 @@ export default function Navbar() {
   const handleNavClick = (target) => (e) => {
     e.preventDefault();
     setActive(false);
-    if (window.lenis) {
-      window.lenis.scrollTo(target, { offset: -70, duration: 1.2 });
-    } else {
-      if (target === 0 || target === '#') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+    scrollToSection(target);
   };
 
   const links = [
@@ -47,9 +41,26 @@ export default function Navbar() {
             </li>
           ))}
           <li>
-            <a href="#contact" className="nav-cta" onClick={handleNavClick('#contact')}>
+            <SpecularButton
+              size="sm"
+              radius={100}
+              tint="#0f0f0f"
+              tintOpacity={0.9}
+              textColor="#b9ff66"
+              lineColor="#b9ff66"
+              baseColor="#3a3a3a"
+              intensity={1}
+              idleIntensity={0.3}
+              shineSize={12}
+              shineFade={36}
+              thickness={1.2}
+              glow={0.9}
+              proximity={200}
+              style={{ fontWeight: 600 }}
+              onClick={handleNavClick('#contact')}
+            >
               Let's Talk
-            </a>
+            </SpecularButton>
           </li>
         </ul>
         <div

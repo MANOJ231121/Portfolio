@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import SpecularButton from './SpecularButton';
 import useScrollProgress from '../hooks/useScrollProgress';
 
 function ease(t) {
@@ -304,21 +305,36 @@ export default function Contact() {
                 {status.error}
               </div>
             )}
-            <div>
-              <button
+            <div
+              style={{
+                opacity: p >= 1 ? 1 : Math.max(0, (p - 0.5) * 3),
+                transform: p >= 1 ? 'none' : `translateY(${Math.max(0, (1 - p) * 40)}px)`,
+              }}
+            >
+              <SpecularButton
                 type="submit"
-                className="btn btn-primary btn-full"
+                size="md"
+                radius={100}
+                tint="#b9ff66"
+                tintOpacity={1}
+                textColor="#0a0a0a"
+                lineColor="#f4ffe0"
+                baseColor="#7fae3a"
+                intensity={1.15}
+                idleIntensity={0.4}
+                shineSize={14}
+                shineFade={40}
+                thickness={1.4}
+                glow={1.1}
+                proximity={300}
                 disabled={status.submitting}
-                style={{
-                  opacity: p >= 1 ? 1 : Math.max(0, (p - 0.5) * 3),
-                  transform: p >= 1 ? 'none' : `translateY(${Math.max(0, (1 - p) * 40)}px)`,
-                }}
+                style={{ width: '100%', fontWeight: 700 }}
               >
                 {status.submitting ? 'Sending...' : 'Send Message'}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
                 </svg>
-              </button>
+              </SpecularButton>
             </div>
             <div
               className="form-glow-line"

@@ -1,6 +1,11 @@
+import { memo } from 'react';
 import useScrollProgress from '../hooks/useScrollProgress';
+import CircularTestimonials from './CircularTestimonials';
 import foodImage from '../assets/food_image.png';
 import kiranaImage from '../assets/kirana_ai.png';
+
+const upcomingImage =
+  'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=900&q=80';
 
 const projects = [
   {
@@ -26,13 +31,54 @@ const projects = [
   {
     id: 3,
     title: 'Coming up',
-    category: '',
-    description: '',
+    category: 'In Progress',
+    description:
+      'Something new is in the works. Check back soon for the next build.',
     tags: [],
     link: '#',
     image: null,
   },
 ];
+
+// Stable slide data so the carousel (which is memoized) doesn't re-render
+// every time the section's scroll-progress animation ticks.
+const slides = projects.map((project) => ({
+  quote: project.description,
+  name: project.title,
+  designation: project.category,
+  src: project.image ?? upcomingImage,
+  tags: project.tags,
+  href: project.link !== '#' ? project.link : null,
+  linkLabel: 'View Project',
+}));
+
+const colors = {
+  name: '#f0f0f0',
+  designation: '#b9ff66',
+  testimony: '#aaaaaa',
+  arrowBackground: '#b9ff66',
+  arrowForeground: '#0a0a0a',
+  arrowHoverBackground: '#8ecc4a',
+};
+
+const fontSizes = {
+  name: 'clamp(1.35rem, 2.4vw, 1.75rem)',
+  designation: '0.9rem',
+  quote: 'clamp(1rem, 1.6vw, 1.125rem)',
+};
+
+const ProjectsCarousel = memo(function ProjectsCarousel() {
+  return (
+    <CircularTestimonials
+      testimonials={slides}
+      autoplay
+      colors={colors}
+      fontSizes={fontSizes}
+      ariaLabel="Featured projects"
+      itemLabel="project"
+    />
+  );
+});
 
 function ease(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -83,75 +129,7 @@ export default function Projects() {
           />
         </div>
 
-        <div className="projects-grid">
-          {projects.map((project, index) => {
-            const cardStart = 0.12 + index * 0.12;
-            const cardP = Math.max(0, Math.min(1, (p - cardStart) / 0.3));
-            const isEven = index % 2 === 0;
-
-            return (
-              <a
-                key={project.id}
-                href={project.link}
-                className="project-card"
-                target={project.link !== '#' ? '_blank' : undefined}
-                rel={project.link !== '#' ? 'noopener noreferrer' : undefined}
-                style={{
-                  transform: cardP >= 1
-                    ? 'none'
-                    : `perspective(800px) rotateX(${(1 - cardP) * (isEven ? -25 : 25)}deg) rotateY(${(1 - cardP) * (isEven ? 8 : -8)}deg) translateY(${(1 - cardP) * 80}px) scale(${0.8 + cardP * 0.2})`,
-                  opacity: cardP,
-                  filter: cardP >= 1 ? 'none' : `blur(${(1 - cardP) * 4}px)`,
-                }}
-              >
-                <div className="project-image">
-                  {project.image ? (
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="project-image-img"
-                      style={{
-                        transform: `scale(${1.08 + (1 - cardP) * 0.08}) translateY(${(1 - cardP) * -18}px)`,
-                        transition: 'transform 0.25s ease-out',
-                      }}
-                    />
-                  ) : (
-                    <div
-                      className="project-image-placeholder"
-                      style={{ transform: `scale(${1 + cardP * 0.05})` }}
-                    >
-                      {project.description ? (
-                        <span>{project.category}</span>
-                      ) : (
-                        <span>Coming Soon</span>
-                      )}
-                    </div>
-                  )}
-                  <div className="project-overlay">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M7 17L17 7M17 7H7M17 7V17" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="project-info">
-                  <div className="project-meta">
-                    <span className="project-category">{project.category}</span>
-                    <span className="project-number">0{project.id}</span>
-                  </div>
-                  <h3 className="project-title">{project.title}</h3>
-                  <p className="project-desc">{project.description}</p>
-                  <div className="project-tags">
-                    {project.tags.map((tag) => (
-                      <span key={tag} className="project-tag">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </a>
-            );
-          })}
-        </div>
+        <ProjectsCarousel />
       </div>
     </section>
   );
