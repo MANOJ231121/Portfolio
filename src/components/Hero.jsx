@@ -8,7 +8,7 @@ const aboutDetails = [
   { label: 'Name', value: 'Manoj Chandra Joshi' },
   { label: 'Email', value: 'manojjoshi230611@gmail.com' },
   { label: 'Location', value: 'Champawat, Uttarakhand, India' },
-  { label: 'Availability', value: 'Open to internships & work', green: true },
+  { label: 'Availability', value: 'Available for freelance work', green: true },
 ];
 
 export default function Hero() {
@@ -24,7 +24,19 @@ export default function Hero() {
 
   return (
     <section className="hero hero-merged" id="hero" ref={heroRef}>
-      <div className="hero-bg-grid" />
+      <div className="hero-media" aria-hidden="true">
+        <video
+          className="hero-video"
+          src={`${import.meta.env.BASE_URL}video/hero-bg.mp4`}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+        />
+        <div className="hero-video-overlay" />
+        <div className="hero-noise" />
+      </div>
       <div className="hero-content">
         <div className="container hero-layout">
           <div className="hero-intro">
@@ -32,10 +44,42 @@ export default function Hero() {
               <span className="badge-dot" />
               Available for freelance work
             </div>
+
+            <h1 className="hero-title">
+              Hi, I’m
+              <span className="hero-title-name">Manoj Chandra Joshi</span>
+            </h1>
+
             <p className="hero-sub">
-              An aspiring developer currently interning at Prodigy Infotech, focused
-              on building exceptional digital experiences and accessible, human-centered products.
+              A developer who loves building clean, user-friendly and impactful digital experiences at the intersection of design and technology.
             </p>
+
+            <div className="hero-tags">
+              <div className="hero-tag">
+                <svg className="hero-tag-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="16 18 22 12 16 6" />
+                  <polyline points="8 6 2 12 8 18" />
+                </svg>
+                <span>Full-Stack Developer</span>
+              </div>
+              <div className="hero-tag">
+                <svg className="hero-tag-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                  <line x1="2" y1="20" x2="22" y2="20" />
+                </svg>
+                <span>Problem Solver</span>
+              </div>
+              <div className="hero-tag">
+                <svg className="hero-tag-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+                  <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+                  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+                  <path d="M12 9V4s3.03.55 4 2c1.08 1.62 0 5 0 5" />
+                </svg>
+                <span>Open Source Contributor</span>
+              </div>
+            </div>
+
             <div className="hero-buttons">
               <SpecularButton
                 size="md"
@@ -56,7 +100,7 @@ export default function Hero() {
                 onClick={() => scrollToSection('#projects')}
               >
                 View My Work
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M7 17L17 7M17 7H7M17 7V17" />
                 </svg>
               </SpecularButton>
@@ -79,6 +123,10 @@ export default function Hero() {
                 onClick={() => scrollToSection('#contact')}
               >
                 Get In Touch
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect width="20" height="16" x="2" y="4" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
               </SpecularButton>
             </div>
           </div>
@@ -100,29 +148,22 @@ export default function Hero() {
                 strapWidth={0.7}
                 metal="silver"
                 gravity={1}
-                damping={0.5}
+                damping={0.4}
                 elasticity={0.5}
-                breeze={0.6}
+                breeze={0.9}
                 interactive
                 intro
               />
             </div>
-            <p className="hero-lanyard-hint">
-              Drag the card to swing <span>·</span> click to flip
-            </p>
           </aside>
 
           <div className="hero-about" id="about">
             <span className="hero-about-eyebrow">01 / About</span>
             <p className="about-lead">
-              Hello! I'm <span className="green">Manoj Chandra Joshi</span>, an aspiring
-              developer who loves turning ideas into reality through clean code
-              and thoughtful design.
+              Hello! I'm <span className="green">Manoj Chandra Joshi</span>, a developer who loves building clean, user-friendly and impactful digital experiences at the intersection of design and technology.
             </p>
             <p>
-              I am a passionate developer who enjoys building responsive and user-friendly
-              web applications. I love working at the intersection of design and technology,
-              turning ideas into seamless digital experiences.
+              I am passionate about turning ideas into seamless digital experiences through clean code, thoughtful architecture, and accessible interfaces.
             </p>
             <div className="about-details">
               {aboutDetails.map((item) => (
